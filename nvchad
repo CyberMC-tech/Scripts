@@ -1,0 +1,157 @@
+#!/bin/bash
+
+
+
+###############################################
+#           Created by CyberMC-Tech           #
+#   Github: https://github.com/CyberMC-Tech   #
+###############################################
+
+
+#######################################################################
+# Description:
+
+    # NvChad install script for debian testing "trixie" based OS.
+    # tested on mx-linux 23 and debian 12.
+ 
+########################################################################
+
+
+###########################################################################################################
+# Listing commands for easy access
+
+
+update_upgrade() {
+sudo apt-get update && sudo apt-get upgrade -y
+}
+
+
+install_depends() {
+sudo apt-get install -y -q neovim python3-neovim &&
+curl -LO https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep_13.0.0_amd64.deb
+sudo dpkg -i ripgrep_13.0.0_amd64.deb
+
+}
+
+
+nvchad_setup(){
+git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1
+}
+
+
+   
+
+############################################################################################################
+# Ask the user if they want to install
+
+confirm() {
+  echo -e "\nYou are about to install ${1}."
+  sleep 1
+  echo -e "\nBe sure to backup your current nvim config first!"
+  sleep 1
+  echo -e "\nAre you ready to install?"
+  sleep 2
+  echo -en "\n[(Y)es|(n)o]: "
+  read -r response
+  check_ans "$response"
+}
+
+
+############################################################################################################
+# Exit the script
+
+abort() {
+  echo -e "\nAborting installation...\n"
+  sleep 2
+  exit 0 
+}
+
+############################################################################################################
+# Rerun command until user answers Y or N
+
+unknown_response() {
+
+  echo -e "\nInvalid option\n"
+  sleep 1
+  echo -e "Please enter a vaild response\n"
+  sleep 2
+  confirm 
+}
+
+############################################################################################################
+# Moves the nvim folder to nvim.bak if it exists
+
+delete_nvim() {
+	if [[ -d "$HOME/.config/nvim" ]]; then
+	  sudo rm -rf "$HOME/.config/nvim" 
+	  sudo rm -rf "$HOME/.local/share/nvim"
+	fi
+}
+
+############################################################################################################
+# error during install so close
+
+error() {
+  echo -e "\nError: recieved a non-zero return code when running command \"${1}\""
+  echo -e "\nPlease check network connection and try again."
+  sleep 1
+  exit 1
+}
+
+#############################################################################################################
+# install script
+
+install_program() {
+  echo -e "\nInstalling ${PROGRAM}. Please wait..."
+  $COMMAND1 || {
+    error "$COMMAND1"
+  }
+  $COMMAND2 || {
+    error "$COMMAND2"
+  }
+  $COMMAND3 || {
+    error "$COMMAND3" 
+  }
+  $COMMAND4 || {
+    error "$COMMAND4" 
+  }
+  $COMMAND5 || {
+    error "$COMMAND5" 
+  }
+  $COMMAND6 || {
+    error "$COMMAND6" 
+  }
+  $COMMAND7 || {
+    error "$COMMAND7" 
+  }
+}
+
+
+#############################################################################################################
+# check if user typed yes or no
+
+check_ans() {
+  ans=$(echo "${1::1}" | tr "[:upper:]" "[:lower:]")
+
+  if [[ "$ans" == "y" ]] || [[ "$ans" == "" ]]; then
+    install_program
+  elif [[ "$ans" == "n" ]]; then
+    abort
+  else
+    unknown_response
+  fi
+}
+
+#############################################################################################################
+# main function for good practice and other possible uses
+
+main() {
+  delete_nvim
+  confirm "NvChad"
+  echo -e "\NNvchad successfully installed\n\nStart neovim with (nvim) and then run NvChadUpdate"
+  sleep 2
+  exit 0
+
+}
+
+main
