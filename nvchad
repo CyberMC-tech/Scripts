@@ -23,6 +23,7 @@
 
 update_upgrade() {
 sudo apt-get update && sudo apt-get upgrade -y
+install_depends
 }
 
 
@@ -30,6 +31,8 @@ install_depends() {
 sudo apt-get install -y -q neovim python3-neovim &&
 curl -LO https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep_13.0.0_amd64.deb
 sudo dpkg -i ripgrep_13.0.0_amd64.deb
+delete_nvim
+
 
 }
 
@@ -82,10 +85,11 @@ unknown_response() {
 # Moves the nvim folder to nvim.bak if it exists
 
 delete_nvim() {
-	if [[ -d "$HOME/.config/nvim" ]]; then
-	  sudo rm -rf "$HOME/.config/nvim" 
-	  sudo rm -rf "$HOME/.local/share/nvim"
-	fi
+  sudo rm -rf "$HOME/.config/nvim" 
+  sudo rm -rf "$HOME/.local/share/nvim"
+  nvchad_setup
+
+
 }
 
 ############################################################################################################
@@ -102,29 +106,12 @@ error() {
 # install script
 
 install_program() {
-  echo -e "\nInstalling ${PROGRAM}. Please wait..."
-  $COMMAND1 || {
-    error "$COMMAND1"
-  }
-  $COMMAND2 || {
-    error "$COMMAND2"
-  }
-  $COMMAND3 || {
-    error "$COMMAND3" 
-  }
-  $COMMAND4 || {
-    error "$COMMAND4" 
-  }
-  $COMMAND5 || {
-    error "$COMMAND5" 
-  }
-  $COMMAND6 || {
-    error "$COMMAND6" 
-  }
-  $COMMAND7 || {
-    error "$COMMAND7" 
-  }
-}
+  update_upgrade
+  install_depends
+  delete_nvim
+
+
+	 
 
 
 #############################################################################################################
@@ -143,15 +130,18 @@ check_ans() {
 }
 
 #############################################################################################################
-# main function for good practice and other possible uses
 
-main() {
-  delete_nvim
-  confirm "NvChad"
+success(){
   echo -e "\NNvchad successfully installed\n\nStart neovim with (nvim) and then run NvChadUpdate"
   sleep 2
   exit 0
+}
 
+# main function for good practice and other possible uses
+
+main() {
+	
+  confirm "NvChad"
 }
 
 main
