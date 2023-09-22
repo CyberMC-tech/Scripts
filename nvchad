@@ -109,6 +109,7 @@ install_program() {
   update_upgrade
   install_depends
   delete_nvim
+}
 
 
 	 
@@ -131,8 +132,8 @@ check_ans() {
 
 #############################################################################################################
 
-success(){
-  echo -e "\NNvchad successfully installed\n\nStart neovim with (nvim) and then run NvChadUpdate"
+success() {
+  echo -e "\nNvchad successfully installed\n\nStart neovim with (nvim) and then run NvChadUpdate"
   sleep 2
   exit 0
 }
