@@ -1,0 +1,33 @@
+#!/bin/bash
+
+###############################################
+#           Created by CyberMC-Tech           #
+#   Github: https://github.com/CyberMC-Tech   #
+###############################################
+
+# Description: NvChad install script for debian testing "trixie" and ubuntu
+
+# NOTE: THIS WILL NOT WORK ON DEBIAN BOOKWORM ONLY TESTING!!
+
+###########################################################################################
+# Update list and upgrade all modules
+
+update_upgrade() {
+    sudo apt update && sudo apt upgrade -y
+    install_depends
+}
+
+
+
+######################################################
+# Install make
+
+install_make() {
+    curl -LO https://ftp.gnu.org/gnu/make/make-4.4.tar.gz
+    cd  make* || echo -e "\nError: unable to cd into the make folder.\n"
+    ./configure && make && sudo make install
+    tar xfv make*
+
+
+}
+######################################################

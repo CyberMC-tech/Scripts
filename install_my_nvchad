@@ -5,32 +5,42 @@
 #   Github: https://github.com/CyberMC-Tech   #
 ###############################################
 
-# Description:
+# Description: NvChad install script for debian testing "trixie" and ubuntu 
 
-# NvChad install script for debian testing "trixie" based OS.
-# tested on mx-linux 23 and debian 12.
+# NOTE: THIS WILL NOT WORK ON DEBIAN BOOKWORM ONLY TESTING!!
 
-###########################################################################################################
-# Listing commands for easy access
+###########################################################################################
+# Update list and upgrade all modules
 
 update_upgrade() {
-	sudo apt-get update -qq && sudo apt-get upgrade -yqq
-	# If sudo is not installed install sudo
-	if [[ "$?" == "127" ]]; then
-		apt-get install -yqq sudo
-	fi
+	sudo apt update && sudo apt upgrade -y
 	install_depends
 }
 
+###########################################################################################
+# Installs required dependencies
+
 install_depends() {
-	sudo apt-get install -yqq curl ripgrep neovim python3-neovim &&
-		# curl -LOs https://github.com/BurntSushi/ripgrep/releases/download/13.0.0/ripgrep_13.0.0_amd64.deb
-		# sudo dpkg -i ripgrep_13.0.0_amd64.deb
-		delete_nvim
+	sudo apt install -y git curl ripgrep &&
+  neovim
+  delete_nvim
 }
+
+###########################################################################################
+# Installs neovim version 0.9.0 for telescope
+
+neovim() {
+  curl -LOs https://github.com/neovim/neovim/releases/download/v0.9.0/nvim-linux64.tar.gz
+  tar xzf nvim-linux64.tar.gz
+  sudo --recursive --force cp nvim-linux64/* /usr/
+  rm -rf nvim-linux64.tar.gz nvim-linux64 
+}
+	
+# Installs the nvchad setup to .config/nvim folder
 
 nvchad_setup() {
 	git clone https://github.com/NvChad/NvChad ~/.config/nvim --depth 1
+  success
 }
 
 ############################################################################################################
@@ -38,9 +48,9 @@ nvchad_setup() {
 
 confirm() {
 	echo -e "\nYou are about to install ${1}."
-	sleep 1
+	sleep 2
 	echo -e "\nBe sure to backup your current nvim config first!"
-	sleep 1
+	sleep 2
 	echo -e "\nAre you ready to install?"
 	sleep 2
 	echo -en "\n[(Y)es|(n)o]: "
@@ -62,38 +72,39 @@ abort() {
 
 unknown_response() {
 	echo -e "\nInvalid option\n"
-	sleep 1
+	sleep 2
 	echo -e "Please enter a vaild response\n"
 	sleep 2
 	confirm
 }
 
 ############################################################################################################
-# Moves the nvim folder to nvim.bak if it exists
+# Deletes the previous nvim config at $HOME/.config/nvim
 
 delete_nvim() {
-	sudo rm -rf "$HOME/.config/nvim"
-	sudo rm -rf "$HOME/.local/share/nvim"
+	rm -rf "$HOME/.config/nvim"
+	rm -rf "$HOME/.local/share/nvim"
 	nvchad_setup
 }
 
 ############################################################################################################
-# Error message if something fails
+# Error message if something fails with function name. Helpful for debugging
 
 error() {
 	echo -e "\nError: recieved a non-zero return code when running command \"${1}\""
+  sleep 2
 	echo -e "\nPlease check network connection and try again."
-	sleep 1
+	sleep 2
 	exit 1
 }
 
 #############################################################################################################
-# Install script
+# This is here to make the code easier to understand begins the installation process
 
 install_program() {
+  echo -e "\nBeginning installation of NvChad\n"
+  sleep 2
 	update_upgrade
-	install_depends
-	delete_nvim
 }
 
 #############################################################################################################
@@ -115,20 +126,20 @@ check_ans() {
 # Lets user know install was successful
 
 success() {
-	echo -e "\nNvchad successfully installed\n\nStart neovim with (nvim) and then run NvChadUpdate"
+	echo -e "\nNvChad successfully installed\n\nYou can now start neovim by typing nvim.\n"
 	sleep 2
 	exit 0
 }
 
 #############################################################################################################
-# main function for good practice and other possible uses
+# Main function for good practice and other possible uses
 
 main() {
 	confirm "NvChad"
 }
 
 #############################################################################################################
-# Run call the main script
+# Run the main function. This is just good practice
 
 main
 
